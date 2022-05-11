@@ -1,86 +1,34 @@
-resource "aws_vpc" "vpc_demo" {
-  cidr_block           = var.cidr
- # instance_tenancy     = var.instance_tenancy
-  enable_dns_hostnames = var.enable_dns_hostnames
-  enable_dns_support   = var.enable_dns_support
-#   enable_classiclink   = var.enable_classiclink
+variable "cidr" {
+  description = "The CIDR block for the VPC."
+  type        = string
+  default     = "10.0.0.0/16"
+}
+# variable "instance_tenancy" {
+#   description = "A tenancy option for instances launched into the VPC"
+#   type        = string
+#   default     = "default"
+# }
 
-  tags = {
-    Name = var.tags
-  }
+variable "enable_dns_hostnames" {
+  description = "Should be true to enable DNS hostnames in the VPC"
+  type        = bool
+  default     = true
 }
 
-resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.vpc_demo.id
-
-  tags = {
-    Name = "internet-gateway-demo"
-  }
+variable "enable_dns_support" {
+  description = "Should be true to enable DNS support in the VPC"
+  type        = bool
+  default     = true
 }
 
-resource "aws_subnet" "public-1" {
-  availability_zone       = "us-east-1a"
-  vpc_id                  = aws_vpc.vpc_demo.id
-  map_public_ip_on_launch = true
-  cidr_block              = "10.0.1.0/24"
+# variable "enable_classiclink" {
+#   description = "Should be true to enable ClassicLink for the VPC. Only valid in regions and accounts that support EC2 Classic."
+#   type        = bool
+#   default     = false
+# }
 
-  tags = {
-    Name = "public-1-demo"
-  }
-}
-
-resource "aws_route_table" "route-public" {
-  vpc_id = aws_vpc.vpc_demo.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
-
-  tags = {
-    Name = "public-route-table-demo"
-  }
-}
-
-resource "aws_route_table_association" "pub-1" {
-  subnet_id      = aws_subnet.public-1.id
-  route_table_id = aws_route_table.route-public.id
-}
-
-resource "aws_security_group" "allow_ssh" {
-  name        = "allow_SSH"
-  description = "Allow SSH inbound traffic"
-  vpc_id      = aws_vpc.vpc_demo.id
-
-  ingress {
-    # SSH Port 22 allowed from any IP
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-    ingress {  #inbound rule
-      # SSH Port 80 allowed from any IP
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-    
-
-  egress {      # outbound rule
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-output "subnet_id"{
-    value = aws_subnet.public-1.id
-}
-
-output "security_group" {
-  value = aws_security_group.allow_ssh.id
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = string
+  default     = "Vpc-custom-demo"
 }
