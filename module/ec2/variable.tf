@@ -2,10 +2,10 @@
 #     default = "1"
 # }
 
-variable "region" {
+# variable "region" {
  
-  default = "us-east-1"
-}
+#   default = "us-east-1"
+# }
 variable "ami_id" {
     
     default =  "ami-0022f774911c1d690"
@@ -20,10 +20,10 @@ variable "instance_type" {
 #   type    = "string"
 #   default = "/dev/xvdh"
 # }
-variable "key_name" {
- 
-  default = "RDSKEY"
-}
+# variable "key_name" {
+#  type = string
+#   #default = "RDSKEY"
+# }
 variable "subnet_id" {
    type = string
 
@@ -32,4 +32,6 @@ variable "subnet_id" {
 variable "security_group" {
   type = string
 }
+
+
 
